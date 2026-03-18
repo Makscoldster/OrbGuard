@@ -8,4 +8,13 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\Towers\" />
+    <Folder Include="Entities\Enemies\" />
+    <Folder Include="Systems\" />
+    <Folder Include="Map\" />
+    <Folder Include="Managers\" />
+    <Folder Include="Core\" />
+  </ItemGroup>
+
 </Project>
