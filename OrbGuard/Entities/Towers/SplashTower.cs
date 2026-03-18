@@ -12,8 +12,8 @@ namespace OrbGuard.Entities.Towers
         public SplashTower(double x, double y)
             : base(x, y,
                 width: 36, height: 36,
-                damage: 15, range: 140,
-                fireRate: 0.8, cost: 175)
+                damage: 15, range: 75,
+                fireRate: 1.2, cost: 200)
         {
             SplashRadius = 60;
         }
@@ -23,16 +23,17 @@ namespace OrbGuard.Entities.Towers
             target.TakeDamage(Damage);
         }
 
-        public void AttackSplash(Enemy target, List<Enemy> allEnemies)
+        public void AttackSplash(Enemy target, List<Enemy> allEnemies, double deltaTime)
         {
+            // використовуємо той самий cooldown що і в Tower
+            if (!TickCooldown(deltaTime)) return; // повертає true тільки коли час стріляти
+
             foreach (var enemy in allEnemies)
             {
                 if (!enemy.IsAlive) continue;
-
                 double dx = enemy.X - target.X;
                 double dy = enemy.Y - target.Y;
                 double dist = Math.Sqrt(dx * dx + dy * dy);
-
                 if (dist <= SplashRadius)
                     enemy.TakeDamage(Damage);
             }

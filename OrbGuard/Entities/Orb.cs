@@ -21,7 +21,7 @@ namespace OrbGuard.Entities
         {
             MaxHp = 100;
             CurrentHp = 100;
-            RegenRate = 2.0;
+            RegenRate = 0.1;
         }
 
         public void TakeDamage(double amount)

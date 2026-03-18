@@ -36,21 +36,22 @@ namespace OrbGuard.Managers
         {
             _enemyManager = enemyManager;
             _spawnQueue = new Queue<EnemyType>();
-            _spawnInterval = 1.2;
+            _spawnInterval = 1.4;
 
             // каталог ворогів з їх вартістю
             _catalog = new List<EnemySpawnEntry>
             {
                 new EnemySpawnEntry(EnemyType.Basic, 10),
-                new EnemySpawnEntry(EnemyType.Fast,  18)
+                new EnemySpawnEntry(EnemyType.Fast,  5)
             };
         }
 
         public void StartWave(int waveNumber)
         {
             // бюджет росте з кожною хвилею
-            _wavePoints = 80 + waveNumber * 40;
+            _wavePoints = 50 + waveNumber * 50 + 2*(int)Math.Pow(waveNumber,3);
             _spawnQueue = BuildSpawnQueue(_wavePoints, waveNumber);
+            _spawnInterval = Math.Max(0.2, 1.4 - waveNumber * 0.3);
             _spawnTimer = 0;
             IsWaveActive = true;
 
@@ -63,27 +64,25 @@ namespace OrbGuard.Managers
             var random = new Random();
             int remaining = points;
 
-            // на перших хвилях тільки Basic, потім mix
-            float fastChance = Math.Min(0.1f + waveNumber * 0.1f, 0.5f);
+            // Fast з'являється тільки з хвилі 3
+            float fastChance = waveNumber < 3 ? 0f : Math.Min((waveNumber - 2) * 0.15f, 0.5f);
 
             while (remaining > 0)
             {
-                // вибираємо тип ворога залежно від хвилі і залишку очок
                 EnemySpawnEntry entry;
-
                 if (remaining >= 18 && random.NextDouble() < fastChance)
                     entry = _catalog[1]; // Fast
                 else
                     entry = _catalog[0]; // Basic
 
                 if (entry.Cost > remaining) break;
-
                 queue.Enqueue(entry.Type);
                 remaining -= entry.Cost;
             }
 
             return queue;
         }
+
 
         public void Update(double deltaTime)
         {

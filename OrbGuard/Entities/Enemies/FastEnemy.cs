@@ -16,9 +16,9 @@ namespace OrbGuard.Entities.Enemies
                 y: path[0].Y,
                 width: 16,
                 height: 16,
-                hp: 30,
-                speed: 160,  
-                reward: 15,  
+                hp: 50,
+                speed: 200,  
+                reward: 10,  
                 damage: 5,
                 path: path)
         { }

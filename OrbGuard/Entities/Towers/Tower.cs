@@ -25,21 +25,6 @@ namespace OrbGuard.Entities.Towers
             _fireCooldown = 0;
         }
 
-        public override void Update(double deltaTime)
-        {
-            if (!IsAlive) return;
-
-            _fireCooldown -= deltaTime;
-
-            if (CurrentTarget == null || !IsTargetValid(CurrentTarget))
-                CurrentTarget = null; // скидаємо якщо ворог помер або вийшов з радіусу
-
-            if (CurrentTarget != null && _fireCooldown <= 0)
-            {
-                Attack(CurrentTarget);
-                _fireCooldown = 1.0 / FireRate;
-            }
-        }
 
         public void AcquireTarget(List<Enemy> enemies)
         {
@@ -76,6 +61,27 @@ namespace OrbGuard.Entities.Towers
         {
             var pen = new Pen(Brushes.White, 0.5) { DashStyle = DashStyles.Dash };
             dc.DrawEllipse(null, pen, new Point(X, Y), Range, Range);
+        }
+        protected bool TickCooldown(double deltaTime)
+        {
+            _fireCooldown -= deltaTime;
+            if (_fireCooldown <= 0)
+            {
+                _fireCooldown = 1.0 / FireRate;
+                return true;
+            }
+            return false;
+        }
+
+        // і прибрати зменшення cooldown з Update() щоб не дублювалось
+        public override void Update(double deltaTime)
+        {
+            if (!IsAlive) return;
+            if (CurrentTarget == null || !IsTargetValid(CurrentTarget))
+                CurrentTarget = null;
+
+            if (CurrentTarget != null && TickCooldown(deltaTime))
+                Attack(CurrentTarget);
         }
 
         protected abstract void Attack(Enemy target);

@@ -46,10 +46,9 @@ namespace OrbGuard.Map
             // вертикальні з'єднання
             MarkPathCol(20, 2, 6);     // з'єднуємо рядки 2→6
             MarkPathCol(0, 6, 10);    // з'єднуємо рядки 6→10
-            MarkPathCol(10, 6, 10);    // фінальний поворот до орба
 
             // центр — орб
-            Tiles[6, 10].Type = TileType.OrbCenter;
+            Tiles[10, 20].Type = TileType.OrbCenter;
         }
 
         private void MarkPathRow(int row, int colFrom, int colTo)
@@ -74,7 +73,6 @@ namespace OrbGuard.Map
             Path.Add(TileCenter(6, 0));    // ←
             Path.Add(TileCenter(10, 0));   // ↓
             Path.Add(TileCenter(10, 20));  // →
-            Path.Add(TileCenter(6, 10));   // фінал — орб
         }
 
         private Point TileCenter(int row, int col)

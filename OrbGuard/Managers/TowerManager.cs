@@ -19,7 +19,6 @@ namespace OrbGuard.Managers
             _map = map;
         }
 
-        // Фабричний метод — єдине місце де створюються башти
         public bool TryPlaceTower(TowerType type, double pixelX, double pixelY)
         {
             Tile? tile = _map.GetTileAtPixel(pixelX, pixelY);
@@ -70,11 +69,15 @@ namespace OrbGuard.Managers
             {
                 tower.AcquireTarget(enemies);
 
-                // SplashTower потребує список всіх ворогів для AOE
-                if (tower is SplashTower splash && splash.CurrentTarget != null)
-                    splash.AttackSplash(splash.CurrentTarget, enemies);
+                if (tower is SplashTower splash)
+                {
+                    if (splash.CurrentTarget != null)
+                        splash.AttackSplash(splash.CurrentTarget, enemies, deltaTime);
+                }
                 else
+                {
                     tower.Update(deltaTime);
+                }
             }
         }
 

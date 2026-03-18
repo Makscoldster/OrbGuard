@@ -11,7 +11,7 @@ namespace OrbGuard.Entities.Towers
         public BasicTower(double x, double y)
             : base(x, y,
                 width: 32, height: 32,
-                damage: 20, range: 120,
+                damage: 50, range: 120,
                 fireRate: 1.5, cost: 100)
         { }
 

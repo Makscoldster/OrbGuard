@@ -10,7 +10,7 @@ namespace OrbGuard.Managers
         private readonly List<Enemy> _enemies = new();
         private readonly List<Point> _path;
 
-        public IReadOnlyList<Enemy> Enemies => _enemies;
+        public List<Enemy> Enemies => _enemies;
 
         public EnemyManager(GameMap map)
         {
