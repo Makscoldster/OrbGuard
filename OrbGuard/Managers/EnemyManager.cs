@@ -1,7 +1,8 @@
-﻿using System.Windows;
-using System.Windows.Media;
-using OrbGuard.Entities.Enemies;
+﻿using OrbGuard.Entities.Enemies;
+using OrbGuard.Entities.Enemies.OrbGuard.Entities.Enemies;
 using OrbGuard.Map;
+using System.Windows;
+using System.Windows.Media;
 
 namespace OrbGuard.Managers
 {
@@ -18,15 +19,15 @@ namespace OrbGuard.Managers
         }
 
         // Фабричний метод — єдине місце де створюються вороги
-        public Enemy Spawn(EnemyType type)
+        public Enemy Spawn(EnemyType type, int waveNumber = 1)
         {
             Enemy enemy = type switch
             {
-                EnemyType.Basic => new BasicEnemy(_path),
-                EnemyType.Fast => new FastEnemy(_path),
-                _ => new BasicEnemy(_path)
+                EnemyType.Basic => new BasicEnemy(_path, waveNumber),
+                EnemyType.Fast => new FastEnemy(_path, waveNumber),
+                EnemyType.Tank => new TankEnemy(_path, waveNumber),
+                _ => new BasicEnemy(_path, waveNumber)
             };
-
             _enemies.Add(enemy);
             return enemy;
         }
@@ -68,6 +69,7 @@ namespace OrbGuard.Managers
     public enum EnemyType
     {
         Basic,
-        Fast
+        Fast,
+        Tank
     }
 }

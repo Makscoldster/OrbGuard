@@ -44,10 +44,8 @@ namespace OrbGuard.UI
 
         private void InitializeGame()
         {
-            // карта
             _gameMap = new GameMap();
 
-            // орб в центрі карти
             double orbX = GameMap.TileSize * 20 + GameMap.TileSize / 2.0;
             double orbY = GameMap.TileSize * 10 + GameMap.TileSize / 2.0;
             _orb = new Orb(orbX, orbY);
@@ -62,7 +60,6 @@ namespace OrbGuard.UI
             GameManager.Instance.Initialize(_orb);
             SubscribeToGameManagerEvents();
 
-            // рендер через DrawingGroup — не лагає
             _drawingGroup = new DrawingGroup();
             _drawingImage = new DrawingImage(_drawingGroup);
             var imageSource = new System.Windows.Controls.Image

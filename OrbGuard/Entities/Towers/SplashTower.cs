@@ -12,10 +12,10 @@ namespace OrbGuard.Entities.Towers
         public SplashTower(double x, double y)
             : base(x, y,
                 width: 36, height: 36,
-                damage: 15, range: 75,
+                damage: 25, range: 72.5,
                 fireRate: 1.2, cost: 200)
         {
-            SplashRadius = 60;
+            SplashRadius = 30;
         }
 
         protected override void Attack(Enemy target)

@@ -1,4 +1,6 @@
 ﻿using OrbGuard.Core;
+using OrbGuard.Entities.Enemies;
+using OrbGuard.Entities.Enemies.OrbGuard.Entities.Enemies;
 using OrbGuard.Managers;
 using System;
 using System.Collections.Generic;
@@ -8,13 +10,22 @@ namespace OrbGuard.Managers
     public class EnemySpawnEntry
     {
         public EnemyType Type { get; }
-        public int Cost { get; }  // вартість в очках хвилі
+        public int Cost { get; }
+        public Func<int, float> SpawnRule { get; }
+        public Func<int, int> RewardRule { get; }
 
-        public EnemySpawnEntry(EnemyType type, int cost)
+        public EnemySpawnEntry(EnemyType type, int cost,
+                               Func<int, float> spawnRule,
+                               Func<int, int> rewardRule)
         {
             Type = type;
             Cost = cost;
+            SpawnRule = spawnRule;
+            RewardRule = rewardRule;
         }
+
+        public float GetChance(int wave) => SpawnRule(wave);
+        public int GetReward(int wave) => RewardRule(wave);
     }
 
     public class WaveManager
@@ -22,10 +33,11 @@ namespace OrbGuard.Managers
         private readonly EnemyManager _enemyManager;
         private readonly List<EnemySpawnEntry> _catalog;
 
-        private int _wavePoints;          // бюджет поточної хвилі
-        private double _spawnInterval;    // секунд між спавнами
-        private double _spawnTimer;       // таймер до наступного спавну
-        private Queue<EnemyType> _spawnQueue; // черга ворогів для спавну
+        private double _spawnInterval;
+        private double _spawnTimer;
+        private int _wavePoints;
+        private int _currentWaveNumber;
+        private Queue<EnemyType> _spawnQueue;
 
         public bool IsWaveActive { get; private set; }
         public bool IsWaveComplete => IsWaveActive &&
@@ -36,20 +48,22 @@ namespace OrbGuard.Managers
         {
             _enemyManager = enemyManager;
             _spawnQueue = new Queue<EnemyType>();
-            _spawnInterval = 1.4;
 
-            // каталог ворогів з їх вартістю
             _catalog = new List<EnemySpawnEntry>
             {
-                new EnemySpawnEntry(EnemyType.Basic, 10),
-                new EnemySpawnEntry(EnemyType.Fast,  5)
+                new EnemySpawnEntry(EnemyType.Basic, BasicEnemy.StaticCost,
+                                    BasicEnemy.GetSpawnRule(), BasicEnemy.GetRewardRule()),
+                new EnemySpawnEntry(EnemyType.Fast,  FastEnemy.StaticCost,
+                                    FastEnemy.GetSpawnRule(),  FastEnemy.GetRewardRule()),
+                new EnemySpawnEntry(EnemyType.Tank,  TankEnemy.StaticCost,
+                                    TankEnemy.GetSpawnRule(),  TankEnemy.GetRewardRule())
             };
         }
 
         public void StartWave(int waveNumber)
         {
-            // бюджет росте з кожною хвилею
-            _wavePoints = 50 + waveNumber * 50 + 2*(int)Math.Pow(waveNumber,3);
+            _currentWaveNumber = waveNumber;
+            _wavePoints = 50 + waveNumber * 50 + 2 * (int)Math.Pow(waveNumber, 3);
             _spawnQueue = BuildSpawnQueue(_wavePoints, waveNumber);
             _spawnInterval = Math.Max(0.2, 1.4 - waveNumber * 0.3);
             _spawnTimer = 0;
@@ -64,16 +78,19 @@ namespace OrbGuard.Managers
             var random = new Random();
             int remaining = points;
 
-            // Fast з'являється тільки з хвилі 3
-            float fastChance = waveNumber < 3 ? 0f : Math.Min((waveNumber - 2) * 0.15f, 0.5f);
-
             while (remaining > 0)
             {
+                float tankChance = _catalog[2].GetChance(waveNumber);
+                float fastChance = _catalog[1].GetChance(waveNumber);
+                double roll = random.NextDouble();
+
                 EnemySpawnEntry entry;
-                if (remaining >= 18 && random.NextDouble() < fastChance)
-                    entry = _catalog[1]; // Fast
+                if (roll < tankChance && remaining >= TankEnemy.StaticCost)
+                    entry = _catalog[2];
+                else if (roll < tankChance + fastChance && remaining >= FastEnemy.StaticCost)
+                    entry = _catalog[1];
                 else
-                    entry = _catalog[0]; // Basic
+                    entry = _catalog[0];
 
                 if (entry.Cost > remaining) break;
                 queue.Enqueue(entry.Type);
@@ -83,18 +100,15 @@ namespace OrbGuard.Managers
             return queue;
         }
 
-
         public void Update(double deltaTime)
         {
             if (!IsWaveActive || _spawnQueue.Count == 0) return;
 
             _spawnTimer -= deltaTime;
+            if (_spawnTimer > 0) return;
 
-            if (_spawnTimer <= 0)
-            {
-                _enemyManager.Spawn(_spawnQueue.Dequeue());
-                _spawnTimer = _spawnInterval;
-            }
+            _enemyManager.Spawn(_spawnQueue.Dequeue(), _currentWaveNumber);
+            _spawnTimer = _spawnInterval;
 
             if (IsWaveComplete)
                 OnWaveComplete();

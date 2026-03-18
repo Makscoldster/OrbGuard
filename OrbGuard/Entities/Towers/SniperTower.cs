@@ -11,8 +11,8 @@ namespace OrbGuard.Entities.Towers
         public SniperTower(double x, double y)
             : base(x, y,
                 width: 28, height: 28,
-                damage: 100, range: 150,
-                fireRate: 0.5, cost: 150)
+                damage: 100, range: 170,
+                fireRate: 0.6, cost: 150)
         { }
 
         protected override void Attack(Enemy target)
