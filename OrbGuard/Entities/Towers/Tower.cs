@@ -56,11 +56,12 @@ namespace OrbGuard.Entities.Towers
             return Math.Sqrt(dx * dx + dy * dy);
         }
 
-        // Рендер радіусу атаки — спільний для всіх башт
         protected void RenderRange(DrawingContext dc)
         {
             var pen = new Pen(Brushes.White, 0.5) { DashStyle = DashStyles.Dash };
+            dc.PushClip(new RectangleGeometry(new Rect(0, 0, 1008, 624)));
             dc.DrawEllipse(null, pen, new Point(X, Y), Range, Range);
+            dc.Pop();
         }
         protected bool TickCooldown(double deltaTime)
         {
@@ -73,7 +74,6 @@ namespace OrbGuard.Entities.Towers
             return false;
         }
 
-        // і прибрати зменшення cooldown з Update() щоб не дублювалось
         public override void Update(double deltaTime)
         {
             if (!IsAlive) return;
