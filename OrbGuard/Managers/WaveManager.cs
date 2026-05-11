@@ -65,7 +65,7 @@ namespace OrbGuard.Managers
             _currentWaveNumber = waveNumber;
             _wavePoints = 50 + waveNumber * 50 + 2 * (int)Math.Pow(waveNumber, 3);
             _spawnQueue = BuildSpawnQueue(_wavePoints, waveNumber);
-            _spawnInterval = Math.Max(0.2, 1.4 - waveNumber * 0.3);
+            _spawnInterval = Math.Max(0.2, 1.6 - waveNumber * 0.2);
             _spawnTimer = 0;
             IsWaveActive = true;
 

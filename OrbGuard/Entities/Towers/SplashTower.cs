@@ -15,7 +15,7 @@ namespace OrbGuard.Entities.Towers
                 damage: 25, range: 72.5,
                 fireRate: 1.2, cost: 200)
         {
-            SplashRadius = 30;
+            SplashRadius = 50;
         }
 
         protected override void Attack(Enemy target)

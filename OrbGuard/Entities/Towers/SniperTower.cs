@@ -12,7 +12,7 @@ namespace OrbGuard.Entities.Towers
             : base(x, y,
                 width: 28, height: 28,
                 damage: 100, range: 170,
-                fireRate: 0.6, cost: 150)
+                fireRate: 1, cost: 150)
         { }
 
         protected override void Attack(Enemy target)
