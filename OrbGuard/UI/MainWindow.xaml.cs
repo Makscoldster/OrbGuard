@@ -70,7 +70,7 @@ namespace OrbGuard.UI
             };
             GameCanvas.Children.Add(imageSource);
 
-            // ігровий цикл
+            // Game loop
             _gameLoop = new GameLoop();
             _gameLoop.OnUpdate += Update;
             _gameLoop.OnRender += Render;
@@ -93,8 +93,13 @@ namespace OrbGuard.UI
             GameManager.Instance.OnGameOver += () =>
             {
                 _gameLoop.Stop();
+
+                this.IsEnabled = false;
+
                 MessageBox.Show("Орб знищено! Гра закінчена.", "Game Over",
                     MessageBoxButton.OK, MessageBoxImage.Information);
+
+                Application.Current.Shutdown();
             };
         }
 
@@ -113,7 +118,6 @@ namespace OrbGuard.UI
 
             _collisionSystem.CheckVictory(TotalWaves);
 
-            // оновлюємо UI орба
             UpdateOrbHud();
 
             if (_waveManager.IsWaveComplete)

@@ -5,14 +5,13 @@ namespace OrbGuard.Map
 {
     public class GameMap
     {
-        public const int TileSize = 48;     // розмір тайлу в пікселях
+        public const int TileSize = 48;    
         public const int Rows = 13;
         public const int Cols = 21;
 
         public Tile[,] Tiles { get; private set; }
-        public List<Point> Path { get; private set; } // шлях у пікселях
+        public List<Point> Path { get; private set; } 
 
-        // Кольори тайлів
         private static readonly Brush PathBrush = new SolidColorBrush(Color.FromRgb(180, 140, 80));
         private static readonly Brush BuildBrush = new SolidColorBrush(Color.FromRgb(60, 100, 60));
         private static readonly Brush OrbBrush = new SolidColorBrush(Color.FromRgb(30, 30, 80));
@@ -28,26 +27,21 @@ namespace OrbGuard.Map
 
         private void InitializeMap()
         {
-            // заповнюємо все як BuildZone
             for (int r = 0; r < Rows; r++)
                 for (int c = 0; c < Cols; c++)
                     Tiles[r, c] = new Tile(r, c, TileType.BuildZone);
 
-            // шлях ворогів — змійка через карту до центру
             int[] pathRows = { 2, 2, 6, 6, 10, 10, 6 };
             int[] pathColStart = { 0, 1, 19, 1, 1, 19, 9 };
             int[] pathColEnd = { 1, 19, 19, 1, 19, 10, 10 };
 
-            // горизонтальні відрізки
-            MarkPathRow(2, 0, 20);   // зліва направо
-            MarkPathRow(6, 0, 20);   // справа наліво (змійка)
-            MarkPathRow(10, 0, 20);   // зліва направо
+            MarkPathRow(2, 0, 20);   
+            MarkPathRow(6, 0, 20);   
+            MarkPathRow(10, 0, 20);  
 
-            // вертикальні з'єднання
-            MarkPathCol(20, 2, 6);     // з'єднуємо рядки 2→6
-            MarkPathCol(0, 6, 10);    // з'єднуємо рядки 6→10
+            MarkPathCol(20, 2, 6);   
+            MarkPathCol(0, 6, 10);   
 
-            // центр — орб
             Tiles[10, 20].Type = TileType.OrbCenter;
         }
 
@@ -66,13 +60,12 @@ namespace OrbGuard.Map
 
         private void BuildPath()
         {
-            // список точок шляху у пікселях — вороги йдуть по цих точках
-            Path.Add(TileCenter(2, 0));    // старт
-            Path.Add(TileCenter(2, 20));   // →
-            Path.Add(TileCenter(6, 20));   // ↓
-            Path.Add(TileCenter(6, 0));    // ←
-            Path.Add(TileCenter(10, 0));   // ↓
-            Path.Add(TileCenter(10, 20));  // →
+            Path.Add(TileCenter(2, 0));    
+            Path.Add(TileCenter(2, 20));  
+            Path.Add(TileCenter(6, 20));  
+            Path.Add(TileCenter(6, 0));   
+            Path.Add(TileCenter(10, 0));  
+            Path.Add(TileCenter(10, 20)); 
         }
 
         private Point TileCenter(int row, int col)

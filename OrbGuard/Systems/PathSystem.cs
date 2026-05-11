@@ -17,7 +17,6 @@ namespace OrbGuard.Systems
             _waypoints = new List<Point>(initialPath);
         }
 
-        // Повертає наступну точку для ворога
         public Point? GetWaypoint(int index)
         {
             if (index < 0 || index >= _waypoints.Count)
@@ -25,10 +24,8 @@ namespace OrbGuard.Systems
             return _waypoints[index];
         }
 
-        // Перевірка чи індекс виходить за межі шляху
         public bool IsEndOfPath(int index) => index >= _waypoints.Count;
 
-        // Відстань між двома точками шляху — для дебагу і UI
         public double GetTotalLength()
         {
             double total = 0;

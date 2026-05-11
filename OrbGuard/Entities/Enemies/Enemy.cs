@@ -19,8 +19,6 @@ namespace OrbGuard.Entities.Enemies
 
         private readonly List<Point> _path;
         public bool ReachedOrb => PathIndex >= _path.Count;
-
-        // контракт — кожен нащадок зобов'язаний реалізувати
         public abstract Func<int, float> SpawnRule { get; }
         public abstract Func<int, int> RewardRule { get; }
 

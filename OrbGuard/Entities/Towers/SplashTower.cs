@@ -25,8 +25,7 @@ namespace OrbGuard.Entities.Towers
 
         public void AttackSplash(Enemy target, List<Enemy> allEnemies, double deltaTime)
         {
-            // використовуємо той самий cooldown що і в Tower
-            if (!TickCooldown(deltaTime)) return; // повертає true тільки коли час стріляти
+            if (!TickCooldown(deltaTime)) return; 
 
             foreach (var enemy in allEnemies)
             {

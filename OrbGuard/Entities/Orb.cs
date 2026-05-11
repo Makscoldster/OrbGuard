@@ -10,7 +10,7 @@ namespace OrbGuard.Entities
     {
         public double MaxHp { get; private set; }
         public double CurrentHp { get; private set; }
-        public double RegenRate { get; private set; } // HP за секунду
+        public double RegenRate { get; private set; } 
 
         private readonly Brush _normalBrush = Brushes.DeepSkyBlue;
         private readonly Brush _damagedBrush = Brushes.OrangeRed;

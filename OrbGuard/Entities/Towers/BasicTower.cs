@@ -17,7 +17,6 @@ namespace OrbGuard.Entities.Towers
 
         protected override void Attack(Enemy target)
         {
-            // миттєвий урон — снаряди додамо в ProjectileManager пізніше
             target.TakeDamage(Damage);
         }
 

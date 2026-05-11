@@ -7,17 +7,15 @@ namespace OrbGuard.Core
 {
     public class GameManager
     {
-        // Singleton — єдиний екземпляр
+        // Singleton 
         private static GameManager? _instance;
         public static GameManager Instance => _instance ??= new GameManager();
 
-        // Стан гри
         public GamePhase CurrentPhase { get; private set; }
         public int Gold { get; private set; }
         public int CurrentWave { get; private set; }
         public Orb? PlayerOrb { get; private set; }
 
-        // Події — UI підписується і оновлюється автоматично
         public event Action<int>? OnGoldChanged;
         public event Action<GamePhase>? OnPhaseChanged;
         public event Action? OnGameOver;
@@ -42,7 +40,7 @@ namespace OrbGuard.Core
 
         public bool SpendGold(int amount)
         {
-            if (Gold < amount) return false; // не вистачає золота
+            if (Gold < amount) return false; 
             Gold -= amount;
             OnGoldChanged?.Invoke(Gold);
             return true;

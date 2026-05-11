@@ -18,7 +18,6 @@ namespace OrbGuard.Managers
             _path = map.Path;
         }
 
-        // Фабричний метод — єдине місце де створюються вороги
         public Enemy Spawn(EnemyType type, int waveNumber = 1)
         {
             Enemy enemy = type switch
@@ -46,7 +45,6 @@ namespace OrbGuard.Managers
                 enemy.Render(dc);
         }
 
-        // Перевірка чи дійшов ворог до орба
         public List<Enemy> GetEnemiesAtOrb()
         {
             var reached = new List<Enemy>();

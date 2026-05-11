@@ -55,7 +55,6 @@ namespace OrbGuard.Managers
             Tower? tower = GetTowerAtTile(tile);
             if (tower == null) return false;
 
-            // повертаємо половину вартості
             GameManager.Instance.AddGold(GetCost(GetTowerType(tower)) / 2);
 
             tile.RemoveTower();

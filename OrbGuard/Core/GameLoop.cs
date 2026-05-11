@@ -13,8 +13,7 @@ namespace OrbGuard.Core
 
         public bool IsRunning { get; private set; }
 
-        // Події на які підписуються GameManager, Managers, Renderer
-        public event Action<double>? OnUpdate; // deltaTime в секундах
+        public event Action<double>? OnUpdate; 
         public event Action? OnRender;
 
         public GameLoop()

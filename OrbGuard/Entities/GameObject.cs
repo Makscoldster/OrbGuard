@@ -7,7 +7,6 @@ namespace OrbGuard.Entities
 {
     public abstract class GameObject
     {
-        // Позиція і розмір
         public double X { get; protected set; }
         public double Y { get; protected set; }
         public double Width { get; protected set; }

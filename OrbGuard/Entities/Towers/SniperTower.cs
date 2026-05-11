@@ -6,7 +6,7 @@ namespace OrbGuard.Entities.Towers
 {
     public class SniperTower : Tower
     {
-        private readonly Brush _brush = Brushes.DarkGreen;
+        private static readonly Brush _brush = Brushes.Green;
 
         public SniperTower(double x, double y)
             : base(x, y,
@@ -22,7 +22,6 @@ namespace OrbGuard.Entities.Towers
 
         public override void Render(DrawingContext dc)
         {
-            // трикутник — візуально відрізняється від BasicTower
             var geometry = new StreamGeometry();
             using (var ctx = geometry.Open())
             {

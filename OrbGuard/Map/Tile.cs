@@ -2,10 +2,10 @@
 {
     public enum TileType
     {
-        Path,       // шлях ворогів — будувати не можна
-        BuildZone,  // можна ставити башти
-        OrbCenter,  // центр де знаходиться Orb
-        Empty       // недоступна зона
+        Path,      
+        BuildZone, 
+        OrbCenter, 
+        Empty      
     }
 
     public class Tile
@@ -13,7 +13,7 @@
         public int Row { get; }
         public int Col { get; }
         public TileType Type { get; internal set; }
-        public bool IsOccupied { get; private set; } // чи стоїть башта
+        public bool IsOccupied { get; private set; } 
 
         public double PixelX => Col * GameMap.TileSize;
         public double PixelY => Row * GameMap.TileSize;

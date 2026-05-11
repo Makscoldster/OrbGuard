@@ -20,7 +20,6 @@ namespace OrbGuard.Systems
                 if (!enemy.IsAlive) continue;
                 if (!enemy.ReachedOrb) continue;
 
-                // ворог дійшов — наносимо урон орбу і знищуємо ворога
                 orb.TakeDamage(enemy.Damage);
                 enemy.Destroy();
 

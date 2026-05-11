@@ -8,10 +8,10 @@ namespace OrbGuard.Entities.Towers
     {
         public double Damage { get; protected set; }
         public double Range { get; protected set; }
-        public double FireRate { get; protected set; }  // пострілів за секунду
+        public double FireRate { get; protected set; } 
         public int Cost { get; private set; }
 
-        private double _fireCooldown;                   // таймер між пострілами
+        private double _fireCooldown;
         public Enemy? CurrentTarget { get; private set; }
 
         protected Tower(double x, double y, double width, double height,
