@@ -1,4 +1,4 @@
-﻿// UI/MainWindow.xaml.cs
+// UI/MainWindow.xaml.cs
 using System;
 using System.Windows;
 using System.Windows.Input;
@@ -34,6 +34,8 @@ namespace OrbGuard.UI
 
         // Константи
         private const int TotalWaves = 10;
+        private const double AutoWaveDelaySeconds = 1.5;
+        private double _autoWaveTimer;
 
         public MainWindow()
         {
@@ -87,7 +89,7 @@ namespace OrbGuard.UI
             GameManager.Instance.OnGoldChanged += gold => GoldText.Text = gold.ToString();
             GameManager.Instance.OnPhaseChanged += phase =>
             {
-                StartWaveBtn.IsEnabled = phase == GamePhase.Preparing;
+                StartWaveBtn.IsEnabled = phase == GamePhase.Preparing && GameManager.Instance.CurrentWave < TotalWaves;
                 WaveText.Text = $"{GameManager.Instance.CurrentWave} / {TotalWaves}";
             };
             GameManager.Instance.OnGameOver += () =>
@@ -103,8 +105,14 @@ namespace OrbGuard.UI
             };
         }
 
-        private void Update(double deltaTime)
+                private void Update(double deltaTime)
         {
+            if (GameManager.Instance.CurrentPhase == GamePhase.Preparing)
+            {
+                UpdateAutoWave(deltaTime);
+                return;
+            }
+
             if (GameManager.Instance.CurrentPhase != GamePhase.WaveInProgress) return;
 
             _waveManager.Update(deltaTime);
@@ -116,12 +124,54 @@ namespace OrbGuard.UI
                 (System.Collections.Generic.List<OrbGuard.Entities.Enemies.Enemy>)_enemyManager.Enemies,
                 _orb);
 
-            _collisionSystem.CheckVictory(TotalWaves);
-
             UpdateOrbHud();
 
             if (_waveManager.IsWaveComplete)
-                GameManager.Instance.OnWaveComplete();
+                CompleteWave();
+        }
+
+        private void CompleteWave()
+        {
+            GameManager.Instance.OnWaveComplete();
+            _autoWaveTimer = AutoWaveDelaySeconds;
+
+            if (GameManager.Instance.CurrentWave >= TotalWaves)
+            {
+                GameManager.Instance.TriggerVictory();
+                _gameLoop.Stop();
+                SetGameplayControlsEnabled(false);
+
+                MessageBox.Show("Вітаю! Ви захистили Орб і пройшли всі хвилі.", "Victory",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void UpdateAutoWave(double deltaTime)
+        {
+            if (AutoWaveCheckBox.IsChecked != true) return;
+            if (GameManager.Instance.CurrentWave >= TotalWaves) return;
+
+            _autoWaveTimer -= deltaTime;
+            if (_autoWaveTimer > 0) return;
+
+            _waveManager.StartWave(GameManager.Instance.CurrentWave + 1);
+        }
+
+        private bool IsTerminalPhase()
+        {
+            return GameManager.Instance.CurrentPhase == GamePhase.GameOver ||
+                   GameManager.Instance.CurrentPhase == GamePhase.Victory;
+        }
+
+        private void SetGameplayControlsEnabled(bool isEnabled)
+        {
+            GameCanvas.IsHitTestVisible = isEnabled;
+            StartWaveBtn.IsEnabled = isEnabled && GameManager.Instance.CurrentWave < TotalWaves;
+            AutoWaveCheckBox.IsEnabled = isEnabled;
+            PauseBtn.IsEnabled = isEnabled;
+
+            if (!isEnabled)
+                AutoWaveCheckBox.IsChecked = false;
         }
 
         private void Render()
@@ -146,6 +196,7 @@ namespace OrbGuard.UI
         // Події миші
         private void GameCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (IsTerminalPhase()) return;
 
             Point pos = e.GetPosition(GameCanvas);
             TowerType type = GetSelectedTowerType();
@@ -154,6 +205,7 @@ namespace OrbGuard.UI
 
         private void GameCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (IsTerminalPhase()) return;
 
             Point pos = e.GetPosition(GameCanvas);
             _towerManager.TryRemoveTower(pos.X, pos.Y);
@@ -169,11 +221,16 @@ namespace OrbGuard.UI
         // Кнопки
         private void StartWaveBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (IsTerminalPhase() || GameManager.Instance.CurrentWave >= TotalWaves) return;
+
+            _autoWaveTimer = AutoWaveDelaySeconds;
             _waveManager.StartWave(GameManager.Instance.CurrentWave + 1);
         }
 
         private void PauseBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (IsTerminalPhase()) return;
+
             if (_gameLoop.IsRunning)
             {
                 _gameLoop.Pause();
@@ -184,6 +241,12 @@ namespace OrbGuard.UI
                 _gameLoop.Resume();
                 PauseBtn.Content = "⏸ Пауза";
             }
+        }
+
+        private void ExitBtn_Click(object sender, RoutedEventArgs e)
+        {
+            _gameLoop.Stop();
+            Application.Current.Shutdown();
         }
     }
 }
